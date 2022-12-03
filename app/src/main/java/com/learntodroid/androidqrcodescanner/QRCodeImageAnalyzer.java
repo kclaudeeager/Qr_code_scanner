@@ -19,7 +19,7 @@ import static android.graphics.ImageFormat.YUV_420_888;
 import static android.graphics.ImageFormat.YUV_422_888;
 import static android.graphics.ImageFormat.YUV_444_888;
 
-public class QRCodeImageAnalyzer implements ImageAnalysis.Analyzer {
+public class QRCodeImageAnalyzer implements ImageAnalysis.Analyzer,QRCodeFoundListener {
     private QRCodeFoundListener listener;
 
     public QRCodeImageAnalyzer(QRCodeFoundListener listener) {
@@ -46,11 +46,23 @@ public class QRCodeImageAnalyzer implements ImageAnalysis.Analyzer {
             try {
                 Result result = new QRCodeMultiReader().decode(binaryBitmap);
                 listener.onQRCodeFound(result.getText());
+                onQRCodeFound(result.getText());
             } catch (FormatException | ChecksumException | NotFoundException e) {
                 listener.qrCodeNotFound();
+                qrCodeNotFound();
             }
         }
 
         image.close();
+    }
+
+    @Override
+    public void onQRCodeFound(String qrCode) {
+
+    }
+
+    @Override
+    public void qrCodeNotFound() {
+
     }
 }

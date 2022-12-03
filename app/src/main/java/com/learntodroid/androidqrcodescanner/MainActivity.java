@@ -13,7 +13,9 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
@@ -43,12 +45,16 @@ public class MainActivity extends AppCompatActivity {
 
         qrCodeFoundButton = findViewById(R.id.activity_main_qrCodeFoundButton);
         qrCodeFoundButton.setVisibility(View.INVISIBLE);
-        qrCodeFoundButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), qrCode, Toast.LENGTH_SHORT).show();
-                Log.i(MainActivity.class.getSimpleName(), "QR Code Found: " + qrCode);
+        qrCodeFoundButton.setOnClickListener(v -> {
+            Toast.makeText(getApplicationContext(), qrCode, Toast.LENGTH_SHORT).show();
+            try {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(qrCode));
+                startActivity(browserIntent);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            Log.i(MainActivity.class.getSimpleName(), "QR Code Found: " + qrCode);
         });
 
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
@@ -117,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void qrCodeNotFound() {
                 qrCodeFoundButton.setVisibility(View.INVISIBLE);
+               // Toast.makeText(getApplicationContext(),"No code found",Toast.LENGTH_LONG).show();
             }
         }));
 
